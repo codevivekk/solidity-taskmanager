@@ -14,6 +14,7 @@ export default function TaskManager() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
+  const [fetchAgain, setFetchAgain] = useState(true)
 
   useEffect( () => {
     const fetchTasks = async () => {
@@ -23,33 +24,45 @@ export default function TaskManager() {
         setTasks(tasks)
       } catch (error) {
         console.error(error)
-        
       }
     }
     fetchTasks()
-  }, [])
+  }, [fetchAgain])
 
-  const handleAddTask = (task: Omit<Task, "id">) => {
-    addTask(task.title ,task.description )
+  const handleAddTask = async (task: Omit<Task, "id">) => {
+    await addTask(task.title ,task.description )
     setIsFormOpen(false)
+    console.log(1)
+    setFetchAgain(!fetchAgain)
   }
 
-  const handleUpdateTask = (updatedTask: Task) => {
-    updateTask(updatedTask?.id, updatedTask.title, updatedTask.completed);
+  const handleUpdateTask = async (updatedTask: Task) => {
+   await  updateTask(updatedTask?.id, updatedTask.title, updatedTask.completed);
     setTasks(tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)))
     setEditingTask(null)
     setIsFormOpen(false)
+    setFetchAgain(!fetchAgain)
   }
 
   const handleDeleteTask = async (id: string) => {
     await deleteTask(id)
     setTasks(tasks.filter((task) => task.id !== id))
+    setFetchAgain(!fetchAgain)
   }
 
-  const handleEditTask = (task: Task) => {
-    setEditingTask(task)
+  const handleEditTask = async (task: Task) => {
+    await setEditingTask(task)
     setIsFormOpen(true)
+    setFetchAgain(!fetchAgain)
   }
+
+  const handleMarkCompleted = async (id: string, title :string,  completed: boolean) => {
+    setTasks(tasks.map((task) => (task.id === id ? { ...task, completed } : task)))
+    await updateTask(id, title, completed);
+    setFetchAgain(!fetchAgain)
+
+  }
+
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -85,6 +98,7 @@ export default function TaskManager() {
         tasks={tasks}
         onDelete={handleDeleteTask}
         onEdit={handleEditTask}
+        onMarkCompleted={handleMarkCompleted}
       />
     </div>
   )
