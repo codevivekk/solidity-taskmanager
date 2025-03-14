@@ -29,19 +29,23 @@ export default function TaskManager() {
     fetchTasks()
   }, [fetchAgain])
 
-  const handleAddTask = async (task: Omit<Task, "id">) => {
-    await addTask(task.title ,task.description )
-    setIsFormOpen(false)
-    console.log(1)
-    setFetchAgain(!fetchAgain)
+  const handleAddTask = async (task: Partial<Task>) => {
+    if (task.title && task.description) {
+      await addTask(task.title, task.description)
+      setIsFormOpen(false)
+      console.log(1)
+      setFetchAgain(!fetchAgain)
+    }
   }
 
-  const handleUpdateTask = async (updatedTask: Task) => {
-   await  updateTask(updatedTask?.id, updatedTask.title, updatedTask.completed);
-    setTasks(tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)))
-    setEditingTask(null)
-    setIsFormOpen(false)
-    setFetchAgain(!fetchAgain)
+  const handleUpdateTask = async (updatedTask: Partial<Task>) => {
+    if (updatedTask.id && updatedTask.title !== undefined && updatedTask.completed !== undefined) {
+      await updateTask(updatedTask.id, updatedTask.title, updatedTask.completed)
+      setTasks(tasks.map((task) => (task.id === updatedTask.id ? updatedTask as Task : task)))
+      setEditingTask(null)
+      setIsFormOpen(false)
+      setFetchAgain(!fetchAgain)
+    }
   }
 
   const handleDeleteTask = async (id: string) => {

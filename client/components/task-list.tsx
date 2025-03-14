@@ -11,7 +11,7 @@ interface TaskListProps {
   tasks: Task[];
   onDelete: (id: string) => void;
   onEdit: (task: Task) => void;
-  onMarkCompleted: (id: string, completed: boolean) => void;
+  onMarkCompleted: (id: string, title:string, completed: boolean) => void;
 }
 
 export default function TaskList({
@@ -48,7 +48,7 @@ export default function TaskList({
                   id={`task-${task.id}`}
                   checked={task.completed}
                   onCheckedChange={(checked) => {
-                    onMarkCompleted(task.id, task.title, checked);
+                    onMarkCompleted(task.id || "" , task.title || '', checked as boolean);
                   }}
                   className="mt-1"
                 />
@@ -85,7 +85,7 @@ export default function TaskList({
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => onDelete(task.id)}
+                    onClick={() => onDelete(task.id || "")}
                     className="h-8 w-8 text-destructive hover:text-destructive"
                   >
                     <Trash2 className="h-4 w-4" />

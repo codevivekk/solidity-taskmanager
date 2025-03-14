@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import type { Task } from "@/types/task"
 
 interface TaskFormProps {
-  onSubmit: (task: any) => void
+  onSubmit: (task: Partial<Task>) => void
   onCancel: () => void
   initialData?: Task | null
 }
